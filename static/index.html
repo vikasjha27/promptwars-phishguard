@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PhishGuard AI - Multi-module personal cybersecurity dashboard">
+  <title>PhishGuard AI — Cybersecurity Dashboard</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 3v6c0 5-3 8.5-7 11-4-2.5-7-6-7-11V5l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div>
+          <p class="eyebrow" data-i18n="eyebrow">Defence and Security</p>
+          <h1>PhishGuard AI</h1>
+          <p class="subtitle" data-i18n="subtitle">Personal Cybersecurity Dashboard</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <label class="lang-wrap" for="lang-select"><span data-i18n="language">Language</span>
+          <select id="lang-select" aria-label="Language selector">
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+            <option value="kn">ಕನ್ನಡ</option>
+          </select>
+        </label>
+        <button id="theme-toggle" class="ghost-btn" type="button" aria-label="Toggle color theme" aria-pressed="false">
+          <span class="theme-icon" aria-hidden="true">◐</span><span id="theme-label">Theme</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard">
+      <nav class="sidebar" aria-label="Main modules">
+        <button class="nav-tab active" data-tab="triage" aria-current="page"><span class="nav-icon" aria-hidden="true">🔍</span><span data-i18n="tab_triage">Phishing &amp; Scam Triage</span></button>
+        <button class="nav-tab" data-tab="qr"><span class="nav-icon" aria-hidden="true">📷</span><span data-i18n="tab_qr">QR Scam Scanner</span></button>
+        <button class="nav-tab" data-tab="password"><span class="nav-icon" aria-hidden="true">🔑</span><span data-i18n="tab_password">Password Checker</span></button>
+        <button class="nav-tab" data-tab="academy"><span class="nav-icon" aria-hidden="true">🎓</span><span data-i18n="tab_academy">Cyber Academy</span></button>
+        <button class="nav-tab" data-tab="history"><span class="nav-icon" aria-hidden="true">🕘</span><span data-i18n="tab_history">Security History</span></button>
+      </nav>
+
+      <main id="main" tabindex="-1">
+        <!-- TRIAGE -->
+        <section id="tab-triage" class="tab-panel active">
+          <div class="layout">
+            <section class="panel" aria-labelledby="input-heading">
+              <div class="panel-header">
+                <div><p class="panel-eyebrow" data-i18n="triage_input">Triage Input</p><h2 id="input-heading" data-i18n="triage_title">Analyze a suspicious message</h2></div>
+                <p class="privacy-note"><span aria-hidden="true">🔒</span> <span data-i18n="privacy_note">Local analysis. Submitted URLs are never fetched.</span></p>
+              </div>
+              <div class="presets" aria-labelledby="presets-heading">
+                <div class="presets-head"><h3 id="presets-heading" data-i18n="presets_title">One-click sample presets</h3><p data-i18n="presets_sub">Load a scenario for instant evaluation.</p></div>
+                <div class="preset-grid" role="group" aria-label="Sample presets">
+                  <button type="button" class="preset-btn" data-preset="bank"><span class="preset-badge danger" data-i18n="verdict_high">High Risk</span><span class="preset-title" data-i18n="preset_bank">Bank KYC / OTP SMS Scam</span></button>
+                  <button type="button" class="preset-btn" data-preset="lookalike"><span class="preset-badge danger" data-i18n="verdict_high">High Risk</span><span class="preset-title" data-i18n="preset_lookalike">Lookalike Login URL</span></button>
+                  <button type="button" class="preset-btn" data-preset="internship"><span class="preset-badge warn" data-i18n="verdict_susp">Suspicious</span><span class="preset-title" data-i18n="preset_intern">Fake Internship Fee Offer</span></button>
+                  <button type="button" class="preset-btn" data-preset="safe"><span class="preset-badge safe" data-i18n="verdict_safe">Safe</span><span class="preset-title" data-i18n="preset_meeting">Normal Meeting Reminder</span></button>
+                </div>
+              </div>
+              <form id="analyze-form" novalidate>
+                <div class="field"><label for="message-text" data-i18n="label_message">Suspicious message text</label>
+                  <textarea id="message-text" name="text" rows="7" maxlength="5000" placeholder="Paste email, SMS, WhatsApp, or chat message here..." aria-describedby="text-help"></textarea>
+                  <p id="text-help" class="field-help" data-i18n="help_message">Email/SMS/WhatsApp content. URLs are extracted and defanged automatically. Ctrl+Enter to analyze.</p></div>
+                <div class="field-row">
+                  <div class="field"><label for="url-input" data-i18n="label_url">Standalone URL (optional)</label><input id="url-input" name="url" type="text" maxlength="2048" inputmode="url" placeholder="https://example.com/login" autocomplete="off"><p class="field-help" data-i18n="help_url">Add a URL if it is separate from the message.</p></div>
+                  <div class="field"><label for="sender-input" data-i18n="label_sender">Sender context</label><select id="sender-input" name="sender"><option value="Unknown">Unknown</option><option value="Bank">Bank</option><option value="Employer">Employer</option><option value="Delivery">Delivery</option><option value="Government">Government</option><option value="Colleague">Colleague</option></select><p class="field-help" data-i18n="help_sender">Helps detect context mismatch.</p></div>
+                </div>
+                <div class="form-actions"><button type="submit" class="primary-btn" id="analyze-btn"><span aria-hidden="true">⚡</span> <span data-i18n="btn_analyze">Analyze Risk</span></button><button type="button" class="ghost-btn" id="clear-btn" data-i18n="btn_clear">Clear</button></div>
+                <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+              </form>
+            </section>
+            <section class="panel" aria-labelledby="result-heading">
+              <div class="panel-header">
+                <div><p class="panel-eyebrow" data-i18n="triage_result">Triage Result</p><h2 id="result-heading" data-i18n="risk_assessment">Risk assessment</h2></div>
+                <div class="report-actions">
+                  <button type="button" class="ghost-btn" id="download-report" disabled aria-disabled="true" data-i18n="btn_download">Download JSON</button>
+                  <button type="button" class="ghost-btn" id="copy-report" disabled aria-disabled="true" data-i18n="btn_copy">Copy Triage Report</button>
+                </div>
+              </div>
+              <div id="result-empty" class="empty-state"><div class="empty-icon" aria-hidden="true">🛡️</div><h3 data-i18n="no_analysis">No analysis yet</h3><p data-i18n="no_analysis_desc">Paste a message, use a preset, and run analysis to see the risk score, indicators, and safe actions.</p></div>
+              <div id="result-content" class="result-content hidden" aria-live="polite">
+                <div class="score-card">
+                  <div class="score-meta">
+                    <p class="label" data-i18n="risk_score">Risk Score</p>
+                    <div class="score-value-row"><span id="risk-score" class="score-value">0</span><span class="score-max">/ 100</span></div>
+                    <div id="verdict-badge" class="verdict-badge safe" role="status"><span class="verdict-icon" id="verdict-icon" aria-hidden="true">✓</span><span id="verdict-text">Safe</span></div>
+                    <p class="confidence"><span data-i18n="confidence">Confidence</span>: <strong id="confidence-text">Medium</strong></p>
+                  </div>
+                  <div class="gauge-wrap" aria-hidden="true"><div class="gauge-bar-bg"><div id="gauge-bar" class="gauge-bar" style="width:0%"></div></div><div class="gauge-scale"><span>0</span><span>30</span><span>65</span><span>100</span></div></div>
+                </div>
+                <div class="sr-only" id="score-sr" aria-live="polite"></div>
+                <div class="result-grid">
+                  <article class="result-block"><h3 data-i18n="flagged_evidence">Matched Evidence</h3><div id="evidence" class="pill-list"></div></article>
+                  <article class="result-block"><h3 data-i18n="indicators">Extracted Indicators</h3><div id="indicators" class="pill-list"></div></article>
+                  <article class="result-block"><h3 data-i18n="reasons">Why this was flagged</h3><ul id="reasons" class="reason-list"></ul></article>
+                  <article class="result-block"><h3 data-i18n="actions">Recommended Actions</h3><ul id="actions" class="action-list"></ul></article>
+                  <article class="result-block" id="reply-block"><h3 data-i18n="safe_reply">Safe Reply / Reporting Note</h3><p id="safe-reply" class="safe-reply"></p></article>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- QR SCANNER -->
+        <section id="tab-qr" class="tab-panel hidden">
+          <div class="layout single">
+            <section class="panel">
+              <div class="panel-header"><div><p class="panel-eyebrow" data-i18n="qr_module">QR Module</p><h2 data-i18n="qr_title">QR Scam Scanner</h2></div><p class="privacy-note"><span aria-hidden="true">🔒</span> <span data-i18n="qr_privacy">QR decoding runs locally in your browser. URLs are never opened automatically.</span></p></div>
+              <div class="warning-box" role="note"><strong data-i18n="safety_warning">Safety warning:</strong> <span data-i18n="qr_warning">Never auto-open scanned links. Review the decoded content and triage it before visiting any URL.</span></div>
+              <div class="field-row">
+                <div class="field"><label for="qr-file" data-i18n="qr_upload">Upload QR image</label><input id="qr-file" type="file" accept="image/*"><p class="field-help" data-i18n="qr_upload_help">Uses BarcodeDetector when supported; otherwise paste decoded text below.</p></div>
+                <div class="field"><label>&nbsp;</label><button type="button" class="ghost-btn" id="qr-demo" data-i18n="qr_demo">Load Suspicious QR Demo</button></div>
+              </div>
+              <div class="field"><label for="qr-text" data-i18n="qr_decoded">Decoded QR text / URL (fallback)</label><textarea id="qr-text" rows="4" maxlength="2048" placeholder="Paste decoded QR content or URL here..."></textarea></div>
+              <div class="form-actions"><button type="button" class="primary-btn" id="qr-scan-btn" data-i18n="qr_scan">Decode & Analyze</button><button type="button" class="ghost-btn" id="qr-clear" data-i18n="btn_clear">Clear</button></div>
+              <p id="qr-status" class="form-status" role="status" aria-live="polite"></p>
+              <div id="qr-result" class="result-block hidden" aria-live="polite"><h3 data-i18n="qr_result">QR Triage Result</h3><div id="qr-result-body"></div></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- PASSWORD -->
+        <section id="tab-password" class="tab-panel hidden">
+          <div class="layout single">
+            <section class="panel">
+              <div class="panel-header"><div><p class="panel-eyebrow" data-i18n="pw_module">Local Tool</p><h2 data-i18n="pw_title">Password Checker</h2></div><p class="privacy-note"><span aria-hidden="true">🔒</span> <span data-i18n="pw_privacy">100% client-side. Passwords are never transmitted or stored.</span></p></div>
+              <div class="field"><label for="pw-input" data-i18n="pw_label">Enter password to evaluate</label><input id="pw-input" type="password" autocomplete="off" aria-describedby="pw-help"><p id="pw-help" class="field-help" data-i18n="pw_help">Checked locally for length, variety, repeats, sequences, and common weak passwords.</p></div>
+              <div class="pw-meter-wrap"><div class="pw-meter-bg"><div id="pw-meter" class="pw-meter"></div></div><p class="pw-verdict" id="pw-verdict">—</p></div>
+              <div class="result-block"><h3 data-i18n="pw_tips">Improvement tips</h3><ul id="pw-tips" class="action-list"><li data-i18n="pw_tip_default">Enter a password to see tips.</li></ul></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- ACADEMY -->
+        <section id="tab-academy" class="tab-panel hidden">
+          <div class="layout single">
+            <section class="panel">
+              <div class="panel-header"><div><p class="panel-eyebrow" data-i18n="ac_module">Learn</p><h2 data-i18n="ac_title">Cyber Academy</h2></div><div class="score-chip" id="quiz-score" aria-live="polite">0/4</div></div>
+              <p class="field-help" data-i18n="ac_desc">Answer 4 quick questions on phishing, OTP, UPI, and password safety. Get instant explanations.</p>
+              <div id="quiz-container" class="quiz-container"></div>
+              <div class="form-actions"><button type="button" class="ghost-btn" id="quiz-reset" data-i18n="ac_reset">Reset Quiz</button></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- HISTORY -->
+        <section id="tab-history" class="tab-panel hidden">
+          <div class="layout single">
+            <section class="panel">
+              <div class="panel-header"><div><p class="panel-eyebrow" data-i18n="hist_module">Local Only</p><h2 data-i18n="hist_title">Security History</h2></div></div>
+              <div class="history-controls">
+                <label class="consent-toggle"><input type="checkbox" id="history-consent"> <span data-i18n="hist_consent">Opt in to store scan summaries in this browser (localStorage)</span></label>
+                <div class="history-actions">
+                  <label for="history-filter" data-i18n="hist_filter">Filter risk</label>
+                  <select id="history-filter"><option value="all" data-i18n="hist_all">All</option><option value="High Risk" data-i18n="verdict_high">High Risk</option><option value="Suspicious" data-i18n="verdict_susp">Suspicious</option><option value="Safe" data-i18n="verdict_safe">Safe</option></select>
+                  <button type="button" class="ghost-btn" id="history-clear" data-i18n="hist_clear">Clear History</button>
+                </div>
+              </div>
+              <p id="history-status" class="form-status" role="status" aria-live="polite"></p>
+              <div id="history-list" class="history-list" aria-live="polite"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="footer"><p data-i18n="footer">PhishGuard AI performs deterministic local triage. It does not fetch submitted URLs, decode QR remotely, or transmit passwords. Not a replacement for security operations.</p></footer>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
