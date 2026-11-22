@@ -1,7 +1,23 @@
 (() => {
   "use strict";
+  // --- DOM helpers ---
   const $ = (id) => document.getElementById(id);
-  const qsa = (s, el=document) => [...el.querySelectorAll(s)];
+  const qs = (sel, el = document) => el.querySelector(sel);
+  const qsa = (sel, el = document) => [...el.querySelectorAll(sel)];
+  const createEl = (tag, attrs = {}, children = []) => {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "className") el.className = v;
+      else if (k === "text") el.textContent = v;
+      else if (k.startsWith("on") && typeof v === "function") el.addEventListener(k.slice(2).toLowerCase(), v);
+      else el.setAttribute(k, v);
+    }
+    for (const c of [].concat(children)) {
+      if (c == null) continue;
+      el.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    }
+    return el;
+  };
 
   const I18N = {
     en: { eyebrow:"Defence and Security", subtitle:"Personal Cybersecurity Dashboard", language:"Language",
@@ -84,6 +100,7 @@
     [/do not click unknown links or download unexpected attachments/i, {en:"Do not click unknown links or download unexpected attachments.", hi:"अज्ञात लिंक पर क्लिक न करें या अप्रत्याशित अटैचमेंट डाउनलोड न करें।", kn:"ಅಜ್ಞಾತ ಲಿಂಕ್‌ಗಳನ್ನು ಕ್ಲಿಕ್ ಮಾಡಬೇಡಿ ಅಥವಾ ಅನಿರೀಕ್ಷಿತ ಲಗತ್ತುಗಳನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಬೇಡಿ."}]
   ];
 
+  // --- i18n & state ---
   let lang = localStorage.getItem("pg-lang") || "en";
   let lastReport = null;
   const HISTORY_KEY = "pg-scan-history";
@@ -108,7 +125,7 @@
     updatePw();
   }
 
-  // Theme
+  // --- theme & navigation ---
   function setTheme(theme){ document.documentElement.setAttribute("data-theme",theme); const light=theme==="light"; $("theme-toggle").setAttribute("aria-pressed",String(light)); $("theme-label").textContent=light?"Light":"Dark"; try{localStorage.setItem("pg-theme",theme);}catch{} }
   function initTheme(){ let s=null; try{s=localStorage.getItem("pg-theme")}catch{} if(s==="light"||s==="dark") return setTheme(s); setTheme(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"); }
 
@@ -125,9 +142,9 @@
   $("theme-toggle").addEventListener("click", () => setTheme((document.documentElement.getAttribute("data-theme")==="dark")?"light":"dark"));
 
   function clearChildren(el){ while(el.firstChild) el.removeChild(el.firstChild); }
-  function makePill(text, cls=""){ const s=document.createElement("span"); s.className="pill"+(cls?" "+cls:""); s.textContent=text; return s; }
-  function makeLi(text){ const li=document.createElement("li"); li.textContent=text; return li; }
-  function setStatus(id,msg,err){ const el=$(id); el.textContent=msg||""; el.className="form-status"+(err?" error":""); }
+  function makePill(text, cls = ""){ return createEl("span", { className: "pill" + (cls ? " " + cls : ""), text: String(text) }); }
+  function makeLi(text){ return createEl("li", { text: String(text) }); }
+  function setStatus(id, msg, err){ const el = $(id); el.textContent = msg || ""; el.className = "form-status" + (err ? " error" : ""); }
 
   // ===== TRIAGE =====
   const PRESETS = {
@@ -344,7 +361,7 @@
   }
   $("quiz-reset").addEventListener("click", ()=>{ quizAns=Array(QUIZ.length).fill(null); renderQuiz(); });
 
-  // Init
+  // --- init ---
   initTheme();
   $("lang-select").value=lang;
   $("history-consent").checked=hasConsent();
